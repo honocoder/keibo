@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// A budget envelope card for variable-spend categories.
-/// The card background fills up left-to-right as the budget is consumed.
+/// The card background fills up bottom-to-top (like a glass) as the budget is consumed.
 struct EnvelopeCard: View {
     let category: Category
     let spent: Double
@@ -15,19 +15,22 @@ struct EnvelopeCard: View {
     private var fillColor: Color { .envelopeFill(progress: progress) }
 
     var body: some View {
-        ZStack(alignment: .leading) {
-            // MARK: Progressive fill layer
+        ZStack(alignment: .bottom) {
+            // MARK: Progressive fill layer (bottom → top, like liquid in a glass)
             GeometryReader { geo in
-                RoundedRectangle(cornerRadius: DS.cornerRadius)
-                    .fill(
-                        LinearGradient(
-                            colors: [fillColor.opacity(0.28), fillColor.opacity(0.10)],
-                            startPoint: .leading,
-                            endPoint: .trailing
+                VStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    RoundedRectangle(cornerRadius: DS.cornerRadius)
+                        .fill(
+                            LinearGradient(
+                                colors: [fillColor.opacity(0.30), fillColor.opacity(0.12)],
+                                startPoint: .bottom,
+                                endPoint: .top
+                            )
                         )
-                    )
-                    .frame(width: geo.size.width * min(progress, 1.0))
-                    .animation(.spring(response: 0.7, dampingFraction: 0.8), value: progress)
+                        .frame(height: geo.size.height * min(progress, 1.0))
+                        .animation(.spring(response: 0.7, dampingFraction: 0.8), value: progress)
+                }
             }
 
             // MARK: Content
