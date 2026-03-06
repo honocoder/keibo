@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Merge these keys into your Xcode project's Info.plist.
+  Required for Face ID / Touch ID usage (NSFaceIDUsageDescription).
+-->
+<plist version="1.0">
+<dict>
+    <!-- Face ID permission — required for LAContext biometric auth -->
+    <key>NSFaceIDUsageDescription</key>
+    <string>Sillage utilise Face ID pour protéger l'accès à tes données financières.</string>
+
+    <!-- Prevent accidental data loss when iCloud backup is off -->
+    <key>UIFileSharingEnabled</key>
+    <false/>
+
+    <!-- Supports all orientations on iPad -->
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+</dict>
+</plist>

@@ -1,0 +1,39 @@
+name: Sillage
+
+options:
+  bundleIdPrefix: com.jimymarletta
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "15"
+
+targets:
+  Sillage:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: Sillage
+        excludes:
+          - SETUP.md
+          - SillageInfo.plist
+    info:
+      path: Sillage/Info.plist
+      properties:
+        CFBundleDisplayName: Sillage
+        CFBundleShortVersionString: "1.0"
+        CFBundleVersion: "1"
+        NSFaceIDUsageDescription: "Sillage utilise Face ID pour protéger l'accès à tes données financières."
+        UIFileSharingEnabled: false
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.jimymarletta.sillage
+        SWIFT_VERSION: "5.9"
+        IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        DEVELOPMENT_TEAM: ""
