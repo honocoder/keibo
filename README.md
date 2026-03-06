@@ -1,2 +1,2 @@
 # keibo
-A minimalist yet powerful zero-based budget app
+A minimalist yet powerful zero-based budget app by honocoder
