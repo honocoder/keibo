@@ -12,7 +12,7 @@ enum CategoryType: String, Codable, CaseIterable, Identifiable {
         switch self {
         case .fixed:    return "lock.fill"
         case .variable: return "cart.fill"
-        case .savings:  return "banknote.fill"
+        case .savings:  return "banknote"
         }
     }
 

@@ -12,21 +12,25 @@ final class BudgetCycle {
     var totalIncome: Double
     /// Surplus carried over automatically from the previous cycle.
     var rolloverAmount: Double
+    /// Additional income added during the cycle (freelance, gifts, etc.).
+    var extraIncome: Double
 
-    /// Effective income = totalIncome + rolloverAmount
-    var effectiveIncome: Double { totalIncome + rolloverAmount }
+    /// Effective income = totalIncome + rolloverAmount + extraIncome
+    var effectiveIncome: Double { totalIncome + rolloverAmount + extraIncome }
 
     init(
         startDate: Date,
         endDate: Date,
         totalIncome: Double = 0,
-        rolloverAmount: Double = 0
+        rolloverAmount: Double = 0,
+        extraIncome: Double = 0
     ) {
         self.id             = UUID()
         self.startDate      = startDate
         self.endDate        = endDate
         self.totalIncome    = totalIncome
         self.rolloverAmount = rolloverAmount
+        self.extraIncome    = extraIncome
     }
 }
 

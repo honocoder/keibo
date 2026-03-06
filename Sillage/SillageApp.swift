@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct SillageApp: App {
+struct KeiboApp: App {
 
     // MARK: - Environment objects (shared across the app)
     @StateObject private var budgetManager = BudgetManager()

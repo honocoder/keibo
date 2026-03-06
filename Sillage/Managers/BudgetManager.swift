@@ -117,10 +117,9 @@ final class BudgetManager: ObservableObject {
         return spent(for: category) / category.targetAmount
     }
 
-    /// Total spending across all non-savings categories in the current cycle.
+    /// Total spending across all categories (including savings) in the current cycle.
     func totalSpent(categories: [Category]) -> Double {
         categories
-            .filter { $0.type != .savings }
             .reduce(0) { $0 + spent(for: $1) }
     }
 
@@ -205,9 +204,10 @@ final class BudgetManager: ObservableObject {
     // MARK: - Savings helpers
     // -------------------------------------------------------------------------
 
-    /// Total saved in a savings category across ALL time (lifetime balance).
+    /// Total saved in a savings category across ALL time (lifetime balance),
+    /// including the initial balance set by the user.
     func totalSaved(for category: Category) -> Double {
-        category.transactions.reduce(0) { $0 + $1.amount }
+        category.initialBalance + category.transactions.reduce(0) { $0 + $1.amount }
     }
 
     // -------------------------------------------------------------------------

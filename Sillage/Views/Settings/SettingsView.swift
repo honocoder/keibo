@@ -13,13 +13,13 @@ struct SettingsView: View {
 
     // Editing state (mirrors UserConfig, saved on change)
     @State private var startDay: Int     = 28
-    @State private var income: String    = ""
     @State private var currency: String  = "EUR"
     @State private var biometric: Bool   = false
 
     // Sheet state
     @State private var showResetAlert    = false
     @State private var showOnboarding    = false
+    @State private var editingCategory: Category? = nil
 
     private var config: UserConfig? { configs.first }
 
@@ -38,18 +38,8 @@ struct SettingsView: View {
                     Text("Le cycle démarre le \(startDay) de chaque mois. Cycle actuel : \(budget.cycleStart.formatted(date: .abbreviated, time: .omitted)) → \(budget.cycleEnd.formatted(date: .abbreviated, time: .omitted)).")
                 }
 
-                // MARK: Revenue
-                Section("Revenu mensuel") {
-                    HStack {
-                        Text("Revenu net")
-                        Spacer()
-                        TextField("2 500", text: $income)
-                            .keyboardType(.decimalPad)
-                            .multilineTextAlignment(.trailing)
-                            .frame(width: 120)
-                            .onChange(of: income) { _, _ in saveIncome() }
-                    }
-
+                // MARK: Devise
+                Section("Devise") {
                     Picker("Devise", selection: $currency) {
                         ForEach(currencies, id: \.self) { Text($0).tag($0) }
                     }
@@ -77,19 +67,27 @@ struct SettingsView: View {
                 // MARK: Categories management
                 Section("Catégories") {
                     ForEach(categories) { cat in
-                        HStack {
-                            Image(systemName: cat.icon)
-                                .frame(width: 24)
-                                .foregroundStyle(.sillageAccent)
-                            Text(cat.name)
-                            Spacer()
-                            Text(cat.type.rawValue)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 3)
-                                .background(Color.secondary.opacity(0.1))
-                                .clipShape(Capsule())
+                        Button {
+                            editingCategory = cat
+                        } label: {
+                            HStack {
+                                Image(systemName: cat.icon)
+                                    .frame(width: 24)
+                                    .foregroundStyle(.sillageAccent)
+                                Text(cat.name)
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                Text(cat.targetAmount.formatted(currencyCode: currency))
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Text(cat.type.rawValue)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(Color.secondary.opacity(0.1))
+                                    .clipShape(Capsule())
+                            }
                         }
                     }
                     .onDelete { indexSet in
@@ -141,6 +139,9 @@ struct SettingsView: View {
             .navigationTitle("Réglages")
             .navigationBarTitleDisplayMode(.large)
             .toolbar { EditButton() }
+            .sheet(item: $editingCategory) { cat in
+                EditCategorySheet(category: cat, currencyCode: currency)
+            }
             .alert("Réinitialiser ?", isPresented: $showResetAlert) {
                 Button("Annuler", role: .cancel) {}
                 Button("Réinitialiser", role: .destructive) { resetAllData() }
@@ -179,14 +180,12 @@ struct SettingsView: View {
             return
         }
         startDay  = c.startDayOfMonth
-        income    = c.monthlyIncome > 0 ? String(c.monthlyIncome) : ""
         currency  = c.currencyCode
         biometric = c.isBiometricAuthEnabled
     }
 
-    private func saveIncome() {
-        config?.monthlyIncome = Double(income) ?? 0
-    }
+    /// Whether we already seeded defaults this session (prevents infinite recursion).
+    @State private var didSeed = false
 
     private func resetAllData() {
         categories.forEach   { context.delete($0) }
@@ -197,6 +196,9 @@ struct SettingsView: View {
     }
 
     private func seedDefaults() {
+        guard !didSeed else { return }
+        didSeed = true
+
         let cfg = UserConfig()
         context.insert(cfg)
 
@@ -209,13 +211,18 @@ struct SettingsView: View {
             ("Transport",   "car.fill",              .variable, 80),
             ("Loisirs",     "gamecontroller.fill",   .variable, 60),
             ("Santé",       "cross.fill",            .variable, 30),
-            ("Livret A",    "banknote.fill",         .savings,  2000),
+            ("Livret A",    "banknote",              .savings,  2000),
         ]
 
         for (i, (name, icon, type, target)) in defaultCategories.enumerated() {
             context.insert(Category(name: name, icon: icon, type: type, targetAmount: target, sortOrder: i))
         }
-        loadConfig()
+
+        // Apply defaults to local state directly (don't call loadConfig
+        // again since @Query hasn't refreshed yet).
+        startDay  = cfg.startDayOfMonth
+        currency  = cfg.currencyCode
+        biometric = cfg.isBiometricAuthEnabled
     }
 }
 
@@ -241,5 +248,104 @@ struct CycleHistoryRow: View {
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                 .foregroundStyle(.secondary)
         }
+    }
+}
+
+// MARK: - Edit Category Sheet
+
+struct EditCategorySheet: View {
+    @Environment(\.modelContext) private var context
+    @Environment(\.dismiss) private var dismiss
+    let category: Category
+    let currencyCode: String
+
+    @State private var name: String = ""
+    @State private var target: String = ""
+    @State private var initialBalance: String = ""
+    @State private var showDeleteConfirm = false
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Nom") {
+                    TextField("Nom de la catégorie", text: $name)
+                }
+                Section(category.type == .savings ? "Objectif mensuel" : "Budget cible") {
+                    TextField("0", text: $target)
+                        .keyboardType(.decimalPad)
+                }
+                if category.type == .savings {
+                    Section {
+                        TextField("0", text: $initialBalance)
+                            .keyboardType(.decimalPad)
+                    } header: {
+                        Text("Solde initial")
+                    } footer: {
+                        Text("Montant déjà présent sur ce compte avant d'utiliser l'app.")
+                    }
+                }
+                Section {
+                    Button(role: .destructive) {
+                        showDeleteConfirm = true
+                    } label: {
+                        Label("Supprimer cette catégorie", systemImage: "trash")
+                    }
+                }
+            }
+            .navigationTitle("Modifier la catégorie")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Enregistrer") {
+                        category.name = name
+                        category.targetAmount = parseDecimal(target)
+                        if category.type == .savings {
+                            category.initialBalance = parseDecimal(initialBalance)
+                        }
+                        Haptics.notification(.success)
+                        dismiss()
+                    }
+                    .disabled(name.isEmpty)
+                }
+            }
+            .alert("Supprimer « \(category.name) » ?", isPresented: $showDeleteConfirm) {
+                Button("Annuler", role: .cancel) {}
+                Button("Supprimer", role: .destructive) {
+                    context.delete(category)
+                    Haptics.notification(.warning)
+                    dismiss()
+                }
+            } message: {
+                Text("La catégorie et toutes ses transactions seront supprimées.")
+            }
+            .onAppear {
+                name = category.name
+                target = category.targetAmount > 0 ? formatForEditing(category.targetAmount) : ""
+                initialBalance = category.initialBalance > 0 ? formatForEditing(category.initialBalance) : ""
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private func parseDecimal(_ text: String) -> Double {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        if let value = formatter.number(from: text) {
+            return value.doubleValue
+        }
+        return Double(text.replacingOccurrences(of: ",", with: ".")) ?? 0
+    }
+
+    private func formatForEditing(_ value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 }

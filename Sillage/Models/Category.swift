@@ -12,6 +12,8 @@ final class Category {
     var targetAmount: Double
     /// Display order within its type section.
     var sortOrder: Int
+    /// Starting balance for savings accounts (e.g. money already on the account before using the app).
+    var initialBalance: Double
 
     /// All transactions linked to this category.
     @Relationship(deleteRule: .cascade, inverse: \Transaction.category)
@@ -22,15 +24,17 @@ final class Category {
         icon: String,
         type: CategoryType,
         targetAmount: Double,
-        sortOrder: Int = 0
+        sortOrder: Int = 0,
+        initialBalance: Double = 0
     ) {
-        self.id           = UUID()
-        self.name         = name
-        self.icon         = icon
-        self.type         = type
-        self.targetAmount = targetAmount
-        self.sortOrder    = sortOrder
-        self.transactions = []
+        self.id             = UUID()
+        self.name           = name
+        self.icon           = icon
+        self.type           = type
+        self.targetAmount   = targetAmount
+        self.sortOrder      = sortOrder
+        self.initialBalance = initialBalance
+        self.transactions   = []
     }
 }
 

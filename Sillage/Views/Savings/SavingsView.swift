@@ -8,7 +8,6 @@ struct SavingsView: View {
     @Query(sort: \Category.sortOrder) private var allCategories: [Category]
     @Query private var configs: [UserConfig]
 
-    @State private var showQuickAdd  = false
     @State private var showAddTarget = false
 
     private var currencyCode: String { configs.first?.currencyCode ?? "EUR" }
@@ -20,47 +19,40 @@ struct SavingsView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottom) {
-                ScrollView {
-                    VStack(spacing: DS.gridSpacing * 1.5) {
-                        // Summary card
-                        totalSummaryCard
+            ScrollView {
+                VStack(spacing: DS.gridSpacing * 1.5) {
+                    // Summary card
+                    totalSummaryCard
 
-                        // Savings accounts
-                        if savingsCategories.isEmpty {
-                            EmptyStateView(
-                                icon: "banknote",
-                                title: "Aucun compte d'épargne",
-                                subtitle: "Ajoute un livret ou un compte d'investissement pour suivre ta progression."
-                            )
-                        } else {
-                            VStack(alignment: .leading, spacing: DS.gridSpacing) {
-                                SectionHeader(title: "Comptes & Livrets")
-                                ForEach(savingsCategories) { cat in
-                                    SavingsAccountCard(
-                                        category: cat,
-                                        totalSaved: budget.totalSaved(for: cat),
-                                        cycleSaved: budget.spent(for: cat),
-                                        currencyCode: currencyCode
-                                    )
-                                }
+                    // Savings accounts
+                    if savingsCategories.isEmpty {
+                        EmptyStateView(
+                            icon: "banknote",
+                            title: "Aucun compte d'épargne",
+                            subtitle: "Ajoute un livret ou un compte d'investissement pour suivre ta progression."
+                        )
+                    } else {
+                        VStack(alignment: .leading, spacing: DS.gridSpacing) {
+                            SectionHeader(title: "Comptes & Livrets")
+                            ForEach(savingsCategories) { cat in
+                                SavingsAccountCard(
+                                    category: cat,
+                                    totalSaved: budget.totalSaved(for: cat),
+                                    cycleSaved: budget.spent(for: cat),
+                                    currencyCode: currencyCode
+                                )
                             }
                         }
-
-                        Color.clear.frame(height: 90)
                     }
-                    .padding(.horizontal, DS.pagePadding)
-                    .padding(.top, 8)
-                }
 
-                FloatingActionButton { showQuickAdd = true }
-                    .padding(.bottom, 24)
+                    // Bottom padding for FAB
+                    Color.clear.frame(height: 90)
+                }
+                .padding(.horizontal, DS.pagePadding)
+                .padding(.top, 8)
             }
             .navigationTitle("Épargne")
             .navigationBarTitleDisplayMode(.large)
-            .sheet(isPresented: $showQuickAdd) {
-                QuickAddSheet()
-            }
         }
     }
 
@@ -117,9 +109,10 @@ struct SavingsAccountCard: View {
     let cycleSaved: Double
     let currencyCode: String
 
-    private var progress: Double {
+    /// Progress toward the monthly savings target (based on this cycle only).
+    private var monthlyProgress: Double {
         guard category.targetAmount > 0 else { return 0 }
-        return totalSaved / category.targetAmount
+        return cycleSaved / category.targetAmount
     }
 
     var body: some View {
@@ -139,7 +132,7 @@ struct SavingsAccountCard: View {
                     Text(category.name)
                         .font(.subheadline.weight(.semibold))
                     if category.targetAmount > 0 {
-                        Text("Objectif \(category.targetAmount.formatted(currencyCode: currencyCode))")
+                        Text("Objectif \(category.targetAmount.formatted(currencyCode: currencyCode))/mois")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -151,7 +144,7 @@ struct SavingsAccountCard: View {
                     Text(totalSaved.formatted(currencyCode: currencyCode))
                         .font(.system(.headline, design: .rounded, weight: .bold))
                     if cycleSaved > 0 {
-                        Text("+\(cycleSaved.formatted(currencyCode: currencyCode))")
+                        Text("+\(cycleSaved.formatted(currencyCode: currencyCode)) ce mois")
                             .font(.caption)
                             .foregroundStyle(.sillageSuccess)
                     }
@@ -160,18 +153,18 @@ struct SavingsAccountCard: View {
 
             if category.targetAmount > 0 {
                 VStack(alignment: .leading, spacing: 6) {
-                    ProgressBar(progress: progress, color: .sillageSavings)
+                    ProgressBar(progress: monthlyProgress, color: .sillageSavings)
                     HStack {
-                        Text("\(Int(min(progress * 100, 100)))% de l'objectif")
+                        Text("\(Int(min(monthlyProgress * 100, 100)))% de l'objectif mensuel")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         Spacer()
-                        if progress < 1 {
-                            Text("Il manque \((category.targetAmount - totalSaved).formatted(currencyCode: currencyCode))")
+                        if monthlyProgress < 1 {
+                            Text("Il reste \((category.targetAmount - cycleSaved).formatted(currencyCode: currencyCode))")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                         } else {
-                            Text("Objectif atteint! 🎉")
+                            Text("Objectif atteint !")
                                 .font(.caption)
                                 .foregroundStyle(.sillageSuccess)
                         }

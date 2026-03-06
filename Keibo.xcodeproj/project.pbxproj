@@ -34,7 +34,7 @@
 		334BBE6C16BDD8B12C2D2093 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		3BB414CF8DB479DF14652E02 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		5D7220DFD079C30592F34873 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		64D76108D65F599F2575D73F /* Sillage.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Sillage.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		64D76108D65F599F2575D73F /* Keibo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keibo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		724AB97DB8A320DB07CB455D /* SillageApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SillageApp.swift; sourceTree = "<group>"; };
 		79BDB4EDA70E42CC639F157F /* BudgetManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetManager.swift; sourceTree = "<group>"; };
 		82CCF1B30113877C8D322554 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -43,6 +43,7 @@
 		AF26AA9C683E658AFDE1AF86 /* SavingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavingsView.swift; sourceTree = "<group>"; };
 		BB0A1B99E1FAB153D06D4404 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		BFC185E6F3870BC76FFB310D /* FixedExpenseRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedExpenseRow.swift; sourceTree = "<group>"; };
+		C24DD4342F5B839800284E66 /* todo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = todo.md; sourceTree = "<group>"; };
 		CB550691AC47FA734B46E4EF /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CD1898682B910749A56A6283 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		D5D323408A72ECE442748E1B /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
@@ -126,6 +127,7 @@
 			children = (
 				82CCF1B30113877C8D322554 /* Info.plist */,
 				724AB97DB8A320DB07CB455D /* SillageApp.swift */,
+				C24DD4342F5B839800284E66 /* todo.md */,
 				BEAB034C44B2097609C1D127 /* Managers */,
 				82CBC9F33C19A5E3AD31CC08 /* Models */,
 				328DCB5A3FEB672319DF1AEA /* Views */,
@@ -152,7 +154,7 @@
 		EF7167B4A54E249188C56B23 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				64D76108D65F599F2575D73F /* Sillage.app */,
+				64D76108D65F599F2575D73F /* Keibo.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -160,9 +162,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A560F13252CA371A756D10F6 /* Sillage */ = {
+		A560F13252CA371A756D10F6 /* Keibo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0BAE03163EFC05649B33C4A9 /* Build configuration list for PBXNativeTarget "Sillage" */;
+			buildConfigurationList = 0BAE03163EFC05649B33C4A9 /* Build configuration list for PBXNativeTarget "Keibo" */;
 			buildPhases = (
 				092FE7B6F79E189B8006DBED /* Sources */,
 			);
@@ -170,11 +172,11 @@
 			);
 			dependencies = (
 			);
-			name = Sillage;
+			name = Keibo;
 			packageProductDependencies = (
 			);
 			productName = Sillage;
-			productReference = 64D76108D65F599F2575D73F /* Sillage.app */;
+			productReference = 64D76108D65F599F2575D73F /* Keibo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -184,14 +186,9 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1500;
-				TargetAttributes = {
-					A560F13252CA371A756D10F6 = {
-						DevelopmentTeam = "";
-					};
-				};
+				LastUpgradeCheck = 2630;
 			};
-			buildConfigurationList = D7F89B30809065A593EB68F7 /* Build configuration list for PBXProject "Sillage" */;
+			buildConfigurationList = D7F89B30809065A593EB68F7 /* Build configuration list for PBXProject "Keibo" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -205,7 +202,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A560F13252CA371A756D10F6 /* Sillage */,
+				A560F13252CA371A756D10F6 /* Keibo */,
 			);
 		};
 /* End PBXProject section */
@@ -244,14 +241,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = DU33G88NJV;
 				INFOPLIST_FILE = Sillage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Keibo;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jimymarletta.sillage;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jimymarletta.keibo;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -262,6 +262,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -295,6 +296,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -308,6 +310,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -318,6 +321,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -351,6 +355,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -371,6 +376,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -382,14 +388,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = DU33G88NJV;
 				INFOPLIST_FILE = Sillage/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Keibo;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jimymarletta.sillage;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jimymarletta.keibo;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -399,7 +408,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0BAE03163EFC05649B33C4A9 /* Build configuration list for PBXNativeTarget "Sillage" */ = {
+		0BAE03163EFC05649B33C4A9 /* Build configuration list for PBXNativeTarget "Keibo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3FAF4985D32721604708A661 /* Debug */,
@@ -408,7 +417,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		D7F89B30809065A593EB68F7 /* Build configuration list for PBXProject "Sillage" */ = {
+		D7F89B30809065A593EB68F7 /* Build configuration list for PBXProject "Keibo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7DA5250B532F2B30C4F68BF6 /* Debug */,

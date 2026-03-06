@@ -21,9 +21,11 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Sillage utilise Face ID pour protéger l'accès à tes données financières.</string>
+	<string>Keibo utilise Face ID pour protéger l'accès à tes données financières.</string>
 	<key>UIFileSharingEnabled</key>
 	<false/>
+	<key>UILaunchScreen</key>
+	<dict/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -8,44 +8,52 @@ struct QuickAddSheet: View {
     @EnvironmentObject private var budget: BudgetManager
 
     @Query(sort: \Category.sortOrder) private var categories: [Category]
+    @Query(sort: \BudgetCycle.startDate, order: .reverse) private var cycles: [BudgetCycle]
+
+    enum TransactionMode: String, CaseIterable {
+        case expense = "Dépense"
+        case income  = "Revenu"
+    }
 
     // Input state
+    @State private var mode: TransactionMode = .expense
     @State private var amountText: String   = ""
     @State private var note: String         = ""
     @State private var selectedCategory: Category? = nil
     @State private var selectedDate: Date   = .now
     @State private var showDatePicker       = false
 
-    private var amount: Double { Double(amountText) ?? 0 }
+    private var amount: Double { parseDecimal(amountText) }
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // MARK: Amount Display
-                amountHeader
+            ScrollView {
+                VStack(spacing: DS.gridSpacing * 1.5) {
+                    // MARK: Mode toggle
+                    modePicker
 
-                Divider().padding(.horizontal)
+                    // MARK: Amount input
+                    amountField
 
-                ScrollView {
-                    VStack(spacing: DS.gridSpacing * 1.5) {
-                        // MARK: Category picker
+                    // MARK: Category picker (expenses only)
+                    if mode == .expense {
                         categoryPicker
-
-                        // MARK: Note field
-                        noteField
-
-                        // MARK: Date row
-                        dateRow
-
-                        Spacer(minLength: 80)
                     }
-                    .padding(DS.pagePadding)
-                }
 
-                // MARK: Validate button
+                    // MARK: Note field
+                    noteField
+
+                    // MARK: Date row
+                    dateRow
+
+                    Spacer(minLength: 80)
+                }
+                .padding(DS.pagePadding)
+            }
+            .safeAreaInset(edge: .bottom) {
                 validateButton
             }
-            .navigationTitle("Nouvelle dépense")
+            .navigationTitle(mode == .expense ? "Nouvelle dépense" : "Nouveau revenu")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -53,29 +61,33 @@ struct QuickAddSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
         .presentationDragIndicator(.visible)
     }
 
     // MARK: - Subviews
 
-    private var amountHeader: some View {
-        VStack(spacing: 6) {
-            Text(amountText.isEmpty ? "0" : amountText)
-                .font(.system(size: 56, weight: .bold, design: .rounded))
-                .foregroundStyle(amountText.isEmpty ? .tertiary : .primary)
-                .contentTransition(.numericText())
-                .animation(.spring(response: 0.3), value: amountText)
-            Text(selectedCategory.map { $0.name } ?? "Sélectionne une catégorie")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+    private var modePicker: some View {
+        Picker("", selection: $mode) {
+            ForEach(TransactionMode.allCases, id: \.self) { m in
+                Text(m.rawValue).tag(m)
+            }
         }
-        .padding(.vertical, 24)
+        .pickerStyle(.segmented)
+    }
 
-        // Numeric keypad
-        .overlay(alignment: .bottom) {
-            NumericKeypad(text: $amountText)
-                .padding(.top, 96)
+    private var amountField: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            SectionHeader(title: "Montant")
+            HStack {
+                Image(systemName: "eurosign.circle")
+                    .foregroundStyle(.sillageAccent)
+                TextField("0,00", text: $amountText)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .keyboardType(.decimalPad)
+            }
+            .padding(DS.cardPadding)
+            .glassCard(cornerRadius: DS.innerRadius)
         }
     }
 
@@ -83,7 +95,7 @@ struct QuickAddSheet: View {
         VStack(alignment: .leading, spacing: 10) {
             SectionHeader(title: "Catégorie")
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 10) {
-                ForEach(categories.filter { $0.type != .savings }) { cat in
+                ForEach(categories) { cat in
                     CategoryChip(
                         category: cat,
                         isSelected: selectedCategory?.id == cat.id
@@ -144,20 +156,26 @@ struct QuickAddSheet: View {
     }
 
     private var validateButton: some View {
-        Button {
+        let accentColors: [Color] = mode == .income
+            ? [.sillageSuccess, .sillageSuccess.opacity(0.8)]
+            : [.sillageAccent, .sillageAccentSecondary]
+
+        return Button {
             save()
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: "checkmark.circle.fill")
+                Image(systemName: mode == .income ? "plus.circle.fill" : "checkmark.circle.fill")
                     .font(.title3)
-                Text("Valider \(amount > 0 ? amount.formatted(currencyCode: "EUR") : "")")
+                Text(mode == .income
+                     ? "Ajouter \(amount > 0 ? "+" + amount.formatted(currencyCode: "EUR") : "")"
+                     : "Valider \(amount > 0 ? amount.formatted(currencyCode: "EUR") : "")")
                     .font(.headline)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 18)
             .background(
                 LinearGradient(
-                    colors: amount > 0 ? [.sillageAccent, .sillageAccentSecondary] : [Color.gray.opacity(0.3)],
+                    colors: amount > 0 ? accentColors : [Color.gray.opacity(0.3)],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
@@ -165,21 +183,44 @@ struct QuickAddSheet: View {
             .foregroundStyle(.white)
             .clipShape(RoundedRectangle(cornerRadius: DS.cornerRadius))
             .padding(DS.pagePadding)
-            .shadow(color: amount > 0 ? .sillageAccent.opacity(0.4) : .clear, radius: 12, y: 4)
+            .shadow(color: amount > 0 ? accentColors[0].opacity(0.4) : .clear, radius: 12, y: 4)
         }
         .disabled(amount <= 0)
         .animation(.spring(response: 0.3), value: amount > 0)
+        .animation(.spring(response: 0.3), value: mode)
     }
 
     // MARK: - Logic
 
     private func save() {
         guard amount > 0 else { return }
-        let tx = Transaction(amount: amount, date: selectedDate, note: note, category: selectedCategory)
-        context.insert(tx)
+
+        if mode == .income {
+            // Add extra income to the current cycle
+            if let cycle = cycles.first(where: {
+                $0.startDate == budget.cycleStart
+            }) {
+                cycle.extraIncome += amount
+            }
+        } else {
+            let tx = Transaction(amount: amount, date: selectedDate, note: note, category: selectedCategory)
+            context.insert(tx)
+        }
+
         Haptics.impact(.medium)
         Haptics.notification(.success)
         dismiss()
+    }
+
+    /// Parses a decimal string accounting for locale (comma or dot as separator).
+    private func parseDecimal(_ text: String) -> Double {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        if let value = formatter.number(from: text) {
+            return value.doubleValue
+        }
+        return Double(text.replacingOccurrences(of: ",", with: ".")) ?? 0
     }
 }
 
@@ -213,62 +254,4 @@ private struct CategoryChip: View {
     }
 }
 
-// MARK: - Numeric Keypad
 
-struct NumericKeypad: View {
-    @Binding var text: String
-
-    private let buttons: [[String]] = [
-        ["1", "2", "3"],
-        ["4", "5", "6"],
-        ["7", "8", "9"],
-        [".", "0", "⌫"]
-    ]
-
-    var body: some View {
-        VStack(spacing: 2) {
-            ForEach(buttons, id: \.self) { row in
-                HStack(spacing: 2) {
-                    ForEach(row, id: \.self) { key in
-                        KeyButton(label: key) {
-                            handleKey(key)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private func handleKey(_ key: String) {
-        Haptics.impact(.light)
-        switch key {
-        case "⌫":
-            if !text.isEmpty { text.removeLast() }
-        case ".":
-            if !text.contains(".") { text += text.isEmpty ? "0." : "." }
-        default:
-            // Max 2 decimal places
-            if let dotIdx = text.firstIndex(of: ".") {
-                let decimals = text.distance(from: text.index(after: dotIdx), to: text.endIndex)
-                if decimals >= 2 { return }
-            }
-            if text == "0" { text = key } else { text += key }
-        }
-    }
-}
-
-private struct KeyButton: View {
-    let label: String
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(label)
-                .font(.title2.weight(.medium))
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(Color.primary.opacity(0.04))
-        }
-        .buttonStyle(.plain)
-    }
-}

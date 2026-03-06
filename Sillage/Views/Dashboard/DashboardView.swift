@@ -9,8 +9,8 @@ struct DashboardView: View {
     @Query(sort: \BudgetCycle.startDate, order: .reverse) private var cycles: [BudgetCycle]
     @Query private var configs: [UserConfig]
 
-    @State private var showQuickAdd   = false
-    @State private var showAddCat     = false
+    @State private var showAddCat      = false
+    @State private var showIncomeEdit  = false
 
     private var config: UserConfig? { configs.first }
     private var currencyCode: String { config?.currencyCode ?? "EUR" }
@@ -30,49 +30,47 @@ struct DashboardView: View {
         categories.filter { $0.type == .variable }
     }
 
+    private var totalPlanned: Double {
+        categories.reduce(0) { $0 + $1.targetAmount }
+    }
+
     private var remaining: Double {
         budget.remainingBudget(effectiveIncome: effectiveIncome, categories: categories)
     }
 
     var body: some View {
         NavigationStack {
-            ZStack(alignment: .bottom) {
-                ScrollView {
-                    VStack(spacing: DS.gridSpacing * 1.5) {
-                        // MARK: Cycle Banner
-                        cycleBanner
+            ScrollView {
+                VStack(spacing: DS.gridSpacing * 1.5) {
+                    // MARK: Cycle Banner
+                    cycleBanner
 
-                        // MARK: "Reste à dépenser" Hero
-                        remainingHero
+                    // MARK: "Reste à dépenser" Hero
+                    remainingHero
 
-                        // MARK: Fixed Expenses
-                        if !fixedCategories.isEmpty {
-                            fixedSection
-                        }
-
-                        // MARK: Envelopes Grid
-                        if !variableCategories.isEmpty {
-                            envelopesSection
-                        }
-
-                        if categories.isEmpty {
-                            EmptyStateView(
-                                icon: "rectangle.stack.badge.plus",
-                                title: "Aucune catégorie",
-                                subtitle: "Ajoute des catégories dans les Réglages pour démarrer."
-                            )
-                        }
-
-                        // Bottom padding for FAB
-                        Color.clear.frame(height: 90)
+                    // MARK: Fixed Expenses
+                    if !fixedCategories.isEmpty {
+                        fixedSection
                     }
-                    .padding(.horizontal, DS.pagePadding)
-                    .padding(.top, 8)
-                }
 
-                // MARK: FAB
-                FloatingActionButton { showQuickAdd = true }
-                    .padding(.bottom, 24)
+                    // MARK: Envelopes Grid
+                    if !variableCategories.isEmpty {
+                        envelopesSection
+                    }
+
+                    if categories.isEmpty {
+                        EmptyStateView(
+                            icon: "rectangle.stack.badge.plus",
+                            title: "Aucune catégorie",
+                            subtitle: "Ajoute des catégories dans les Réglages pour démarrer."
+                        )
+                    }
+
+                    // Bottom padding for FAB
+                    Color.clear.frame(height: 90)
+                }
+                .padding(.horizontal, DS.pagePadding)
+                .padding(.top, 8)
             }
             .navigationTitle("Budget")
             .navigationBarTitleDisplayMode(.large)
@@ -86,11 +84,9 @@ struct DashboardView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showQuickAdd) {
-                QuickAddSheet()
-            }
             .sheet(isPresented: $showAddCat) {
                 AddCategorySheet()
+                    .presentationDetents([.large])
             }
             .onAppear {
                 if let startDay = config?.startDayOfMonth {
@@ -153,21 +149,65 @@ struct DashboardView: View {
             if effectiveIncome > 0 {
                 let spentRatio = min(budget.totalSpent(categories: categories) / effectiveIncome, 1)
                 HStack(spacing: 4) {
-                    Text(budget.totalSpent(categories: categories).formatted(currencyCode: currencyCode) + " dépensé")
+                    Text(budget.totalSpent(categories: categories).formatted(currencyCode: currencyCode) + (budget.totalSpent(categories: categories) > 1 ? " dépensés" : " dépensé"))
                     Text("·")
-                    Text(effectiveIncome.formatted(currencyCode: currencyCode) + " revenu")
+                    Button {
+                        showIncomeEdit = true
+                    } label: {
+                        HStack(spacing: 2) {
+                            Text(effectiveIncome.formatted(currencyCode: currencyCode) + " revenu")
+                            Image(systemName: "pencil.line")
+                                .font(.caption2)
+                        }
+                    }
                 }
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
+                if let extra = currentCycle?.extraIncome, extra > 0 {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.down.circle.fill")
+                            .font(.caption2)
+                        Text("+\(extra.formatted(currencyCode: currencyCode)) revenu additionnel")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.sillageSuccess)
+                }
+
+                if totalPlanned > 0 {
+                    let plannedRatio = effectiveIncome > 0 ? totalPlanned / effectiveIncome * 100 : 0
+                    HStack(spacing: 4) {
+                        Image(systemName: "calendar.badge.clock")
+                            .font(.caption2)
+                        Text("\(totalPlanned.formatted(currencyCode: currencyCode)) prévus (\(Int(plannedRatio))% du revenu)")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(totalPlanned > effectiveIncome ? .sillageDanger : .secondary)
+                }
+
                 ProgressBar(progress: spentRatio, color: .envelopeFill(progress: spentRatio))
                     .padding(.horizontal, 24)
+            } else {
+                Button {
+                    showIncomeEdit = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Définir ton revenu mensuel")
+                    }
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(.sillageAccent)
+                }
+                .padding(.top, 4)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 28)
         .padding(.horizontal, DS.cardPadding)
         .glassCard()
+        .sheet(isPresented: $showIncomeEdit) {
+            IncomeEditSheet()
+        }
     }
 
     private var fixedSection: some View {
@@ -387,5 +427,95 @@ struct AddCategorySheet: View {
         context.insert(cat)
         Haptics.notification(.success)
         dismiss()
+    }
+}
+
+// MARK: - Income Edit Sheet
+
+struct IncomeEditSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var budget: BudgetManager
+    @Query private var configs: [UserConfig]
+    @Query(sort: \BudgetCycle.startDate, order: .reverse) private var cycles: [BudgetCycle]
+
+    @State private var incomeText: String = ""
+    @State private var startingBalanceText: String = ""
+
+    private var config: UserConfig? { configs.first }
+
+    private var currentCycle: BudgetCycle? {
+        cycles.first { $0.startDate == budget.cycleStart }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Ex : 2500", text: $incomeText)
+                        .keyboardType(.decimalPad)
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                } header: {
+                    Text("Revenu net mensuel")
+                } footer: {
+                    Text("Le montant que tu reçois chaque mois après impôts.")
+                }
+
+                Section {
+                    TextField("Ex : 1000", text: $startingBalanceText)
+                        .keyboardType(.decimalPad)
+                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                } header: {
+                    Text("Solde de départ du cycle")
+                } footer: {
+                    Text("L'argent que tu avais déjà disponible avant ce cycle (report, économies sur le compte courant…). Sera ajouté au revenu pour ce cycle.")
+                }
+            }
+            .navigationTitle("Revenu")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Annuler") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Enregistrer") {
+                        let parsedIncome = parseDecimal(incomeText)
+                        let parsedBalance = parseDecimal(startingBalanceText)
+                        config?.monthlyIncome = parsedIncome
+                        currentCycle?.totalIncome = parsedIncome
+                        currentCycle?.rolloverAmount = parsedBalance
+                        Haptics.notification(.success)
+                        dismiss()
+                    }
+                }
+            }
+            .onAppear {
+                if let income = config?.monthlyIncome, income > 0 {
+                    incomeText = formatForEditing(income)
+                }
+                if let rollover = currentCycle?.rolloverAmount, rollover > 0 {
+                    startingBalanceText = formatForEditing(rollover)
+                }
+            }
+        }
+        .presentationDetents([.large])
+    }
+
+    private func parseDecimal(_ text: String) -> Double {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        if let value = formatter.number(from: text) {
+            return value.doubleValue
+        }
+        return Double(text.replacingOccurrences(of: ",", with: ".")) ?? 0
+    }
+
+    private func formatForEditing(_ value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 }

@@ -32,34 +32,43 @@ struct ContentView: View {
 
 struct MainTabView: View {
     @State private var selectedTab = 0
+    @State private var showQuickAdd = false
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            DashboardView()
-                .tabItem {
-                    Label("Budget", systemImage: "square.grid.2x2.fill")
-                }
-                .tag(0)
+        ZStack(alignment: .bottom) {
+            TabView(selection: $selectedTab) {
+                DashboardView()
+                    .tabItem {
+                        Label("Budget", systemImage: "square.grid.2x2.fill")
+                    }
+                    .tag(0)
 
-            SavingsView()
-                .tabItem {
-                    Label("Épargne", systemImage: "chart.line.uptrend.xyaxis")
-                }
-                .tag(1)
+                SavingsView()
+                    .tabItem {
+                        Label("Épargne", systemImage: "chart.line.uptrend.xyaxis")
+                    }
+                    .tag(1)
 
-            HistoryView()
-                .tabItem {
-                    Label("Historique", systemImage: "clock.arrow.circlepath")
-                }
-                .tag(2)
+                HistoryView()
+                    .tabItem {
+                        Label("Historique", systemImage: "clock.arrow.circlepath")
+                    }
+                    .tag(2)
 
-            SettingsView()
-                .tabItem {
-                    Label("Réglages", systemImage: "gearshape.fill")
-                }
-                .tag(3)
+                SettingsView()
+                    .tabItem {
+                        Label("Réglages", systemImage: "gearshape.fill")
+                    }
+                    .tag(3)
+            }
+            .tint(.sillageAccent)
+
+            FloatingActionButton { showQuickAdd = true }
+                .padding(.bottom, 64)
         }
-        .tint(.sillageAccent)
+        .sheet(isPresented: $showQuickAdd) {
+            QuickAddSheet()
+        }
     }
 }
 

@@ -1,0 +1,3 @@
+- [ ] Lors de la première ouverture de l'app, ajouter une explication du budget base zéro + un petit tuto de l'app.
+- [ ] Lors de la première ouverture, demander le prénom du user et ajouter ça dans l'écran Réglages. Lui demander en même temps la date de son salaire pour set up ça à sa place dans les réglages.
+- [ ] Mettre en place les notifs de rappel de budget. Si possiblen demander s'il veut une notif quotidienne ou hebdomadaire et faire en conséquence.
