@@ -4,17 +4,17 @@ import SwiftUI
 
 extension Color {
     /// Main purple-indigo accent used for interactive elements.
-    static let sillageAccent = Color(red: 0.42, green: 0.30, blue: 0.92)
+    static var sillageAccent: Color         { Color(red: 0.42, green: 0.30, blue: 0.92) }
     /// Soft indigo gradient end.
-    static let sillageAccentSecondary = Color(red: 0.55, green: 0.38, blue: 1.0)
+    static var sillageAccentSecondary: Color { Color(red: 0.55, green: 0.38, blue: 1.0) }
     /// Mint green for healthy / under-budget state.
-    static let sillageSuccess = Color(red: 0.18, green: 0.78, blue: 0.60)
+    static var sillageSuccess: Color        { Color(red: 0.18, green: 0.78, blue: 0.60) }
     /// Amber for warning (75–100 % spent).
-    static let sillageWarning = Color(red: 1.0,  green: 0.70, blue: 0.20)
+    static var sillageWarning: Color        { Color(red: 1.0,  green: 0.70, blue: 0.20) }
     /// Coral red for over-budget state.
-    static let sillageDanger  = Color(red: 1.0,  green: 0.35, blue: 0.38)
+    static var sillageDanger: Color         { Color(red: 1.0,  green: 0.35, blue: 0.38) }
     /// Soft blue for savings.
-    static let sillageSavings = Color(red: 0.25, green: 0.60, blue: 1.0)
+    static var sillageSavings: Color        { Color(red: 0.25, green: 0.60, blue: 1.0) }
 
     /// Card fill color based on spending progress (0…1+).
     static func envelopeFill(progress: Double) -> Color {
@@ -24,6 +24,16 @@ extension Color {
         default:      return .sillageDanger
         }
     }
+}
+
+// ShapeStyle conformance — enables `.sillageAccent` in foregroundStyle / fill contexts.
+extension ShapeStyle where Self == Color {
+    static var sillageAccent: Color          { Color(red: 0.42, green: 0.30, blue: 0.92) }
+    static var sillageAccentSecondary: Color { Color(red: 0.55, green: 0.38, blue: 1.0) }
+    static var sillageSuccess: Color         { Color(red: 0.18, green: 0.78, blue: 0.60) }
+    static var sillageWarning: Color         { Color(red: 1.0,  green: 0.70, blue: 0.20) }
+    static var sillageDanger: Color          { Color(red: 1.0,  green: 0.35, blue: 0.38) }
+    static var sillageSavings: Color         { Color(red: 0.25, green: 0.60, blue: 1.0) }
 }
 
 // MARK: - Design Tokens

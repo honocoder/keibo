@@ -228,7 +228,7 @@ struct CycleHistoryRow: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(cycle.startDate.formatted(.dateTime.day().month("abbreviated"))) – \(cycle.endDate.formatted(.dateTime.day().month("abbreviated").year()))")
+                Text("\(cycle.startDate.formatted(.dateTime.day().month(.abbreviated))) – \(cycle.endDate.formatted(.dateTime.day().month(.abbreviated).year()))")
                     .font(.subheadline)
                 if cycle.rolloverAmount > 0 {
                     Text("Report : +\(cycle.rolloverAmount.formatted(currencyCode: currency))")

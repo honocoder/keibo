@@ -111,7 +111,7 @@ struct DashboardView: View {
         HStack {
             Image(systemName: "calendar.circle.fill")
                 .foregroundStyle(.sillageAccent)
-            Text("Cycle \(budget.cycleStart.formatted(.dateTime.day().month("abbreviated"))) → \(budget.cycleEnd.formatted(.dateTime.day().month("abbreviated")))")
+            Text("Cycle \(budget.cycleStart.formatted(.dateTime.day().month(.abbreviated))) → \(budget.cycleEnd.formatted(.dateTime.day().month(.abbreviated)))")
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.secondary)
             Spacer()
