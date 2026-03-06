@@ -89,15 +89,35 @@ extension View {
 // MARK: - Number formatting
 
 extension Double {
-    /// Formats a currency amount using the given ISO-4217 code.
+    /// Formats a currency amount as "10€", "10,50€", "$10", etc.
+    /// Number uses the current locale's decimal separator (comma on fr-FR).
     func formatted(currencyCode: String) -> String {
         let formatter = NumberFormatter()
-        formatter.numberStyle          = .currency
-        formatter.currencyCode         = currencyCode
+        formatter.numberStyle           = .decimal
+        formatter.locale                = .current
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 0
-        return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
+        let number = formatter.string(from: NSNumber(value: self)) ?? "\(self)"
+        let symbol = Self.currencySymbol(for: currencyCode)
+        // Prefix symbol for currencies that conventionally lead (USD, GBP…)
+        return Self.prefixedCurrencies.contains(currencyCode)
+            ? "\(symbol)\(number)"
+            : "\(number)\(symbol)"
     }
+
+    private static func currencySymbol(for code: String) -> String {
+        switch code {
+        case "EUR": return "€"
+        case "USD": return "$"
+        case "GBP": return "£"
+        case "CHF": return "Fr."
+        case "CAD": return "CA$"
+        case "JPY": return "¥"
+        default:    return code
+        }
+    }
+
+    private static let prefixedCurrencies: Set<String> = ["USD", "GBP", "CAD", "JPY"]
 }
 
 // MARK: - Haptic helpers
