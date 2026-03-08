@@ -49,17 +49,23 @@ struct MainTabView: View {
                     }
                     .tag(1)
 
+                SubscriptionsView()
+                    .tabItem {
+                        Label("Abonnements", systemImage: "repeat.circle.fill")
+                    }
+                    .tag(2)
+
                 HistoryView()
                     .tabItem {
                         Label("Historique", systemImage: "clock.arrow.circlepath")
                     }
-                    .tag(2)
+                    .tag(3)
 
                 SettingsView()
                     .tabItem {
                         Label("Réglages", systemImage: "gearshape.fill")
                     }
-                    .tag(3)
+                    .tag(4)
             }
             .tint(.sillageAccent)
 

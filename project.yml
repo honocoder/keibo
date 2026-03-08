@@ -12,14 +12,17 @@ targets:
     platform: iOS
     deploymentTarget: "17.0"
     sources:
-      - path: Sillage
+      - path: Keibo
         excludes:
           - SETUP.md
           - SillageInfo.plist
+    resources:
+      - path: Keibo/Assets.xcassets
     info:
-      path: Sillage/Info.plist
+      path: Keibo/Info.plist
       properties:
         CFBundleDisplayName: Sillage
+        CFBundleIconName: AppIcon
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
         NSFaceIDUsageDescription: "Sillage utilise Face ID pour protéger l'accès à tes données financières."
@@ -28,11 +31,12 @@ targets:
           - UIInterfaceOrientationPortrait
         UISupportedInterfaceOrientations~ipad:
           - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.jimymarletta.sillage
+        PRODUCT_BUNDLE_IDENTIFIER: com.jimymarletta.keibo
         SWIFT_VERSION: "5.9"
         IPHONEOS_DEPLOYMENT_TARGET: "17.0"
         TARGETED_DEVICE_FAMILY: "1,2"

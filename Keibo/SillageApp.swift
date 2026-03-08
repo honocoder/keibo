@@ -16,6 +16,7 @@ struct KeiboApp: App {
             Category.self,
             Transaction.self,
             BudgetCycle.self,
+            Subscription.self,
         ])
         let config = ModelConfiguration(
             schema: schema,
