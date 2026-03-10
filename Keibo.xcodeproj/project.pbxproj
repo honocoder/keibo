@@ -22,10 +22,12 @@
 		8E6B70E8AD210A6604060189 /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0A1B99E1FAB153D06D4404 /* Transaction.swift */; };
 		9479798A53DEA7A1E33121D7 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB550691AC47FA734B46E4EF /* Category.swift */; };
 		C185E969D8CC162D5E9B1101 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1898682B910749A56A6283 /* SettingsView.swift */; };
+		C227B2222F5E14CD00618E20 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = C227B2212F5E14CD00618E20 /* Subscription.swift */; };
 		C27B76F8BA66D190946493EF /* FloatingActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1690ED48551565391D774F73 /* FloatingActionButton.swift */; };
 		D7936C8385654111507716B7 /* UserConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5A7B49B6C1F477360E1ADEB /* UserConfig.swift */; };
 		E1F4A8B275A44D5F9D32C1A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7D2E4F91A6C43B8B3A7120D /* Assets.xcassets */; };
 		E5F36F9DF5FBD5659F3A8B7C /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D323408A72ECE442748E1B /* DashboardView.swift */; };
+		FA1234567890ABCDEF123456 /* SubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB1234567890ABCDEF123456 /* SubscriptionsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,8 @@
 		B7D2E4F91A6C43B8B3A7120D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BB0A1B99E1FAB153D06D4404 /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		BFC185E6F3870BC76FFB310D /* FixedExpenseRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedExpenseRow.swift; sourceTree = "<group>"; };
+		C227B2212F5E14CD00618E20 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		FB1234567890ABCDEF123456 /* SubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsView.swift; sourceTree = "<group>"; };
 		C24DD4342F5B839800284E66 /* todo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = todo.md; sourceTree = "<group>"; };
 		CB550691AC47FA734B46E4EF /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CD1898682B910749A56A6283 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -72,6 +76,7 @@
 				D9A14BC5E6637C2E518970D2 /* Savings */,
 				C2E7B745568FF31E63ABBDA6 /* Settings */,
 				7F87C316135C1EFFDF555D72 /* Shared */,
+				FC1234567890ABCDEF123456 /* Subscriptions */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -85,12 +90,21 @@
 			path = Shared;
 			sourceTree = "<group>";
 		};
+		FC1234567890ABCDEF123456 /* Subscriptions */ = {
+			isa = PBXGroup;
+			children = (
+				FB1234567890ABCDEF123456 /* SubscriptionsView.swift */,
+			);
+			path = Subscriptions;
+			sourceTree = "<group>";
+		};
 		82CBC9F33C19A5E3AD31CC08 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				D70AFB14E14A2673FEC600DD /* BudgetCycle.swift */,
 				CB550691AC47FA734B46E4EF /* Category.swift */,
 				83594C1B06B750F63E007AA9 /* CategoryType.swift */,
+				C227B2212F5E14CD00618E20 /* Subscription.swift */,
 				BB0A1B99E1FAB153D06D4404 /* Transaction.swift */,
 				F5A7B49B6C1F477360E1ADEB /* UserConfig.swift */,
 			);
@@ -231,6 +245,7 @@
 				297373F7A84091D9BCA3798B /* BudgetCycle.swift in Sources */,
 				43494C5BA6D92D887F002DBD /* BudgetManager.swift in Sources */,
 				9479798A53DEA7A1E33121D7 /* Category.swift in Sources */,
+				C227B2222F5E14CD00618E20 /* Subscription.swift in Sources */,
 				28C90380967BF66DE3C34B83 /* CategoryType.swift in Sources */,
 				31F7DD97C647DECB32257344 /* ContentView.swift in Sources */,
 				E5F36F9DF5FBD5659F3A8B7C /* DashboardView.swift in Sources */,
@@ -242,6 +257,7 @@
 				4C45E366D1C74F59C7436654 /* QuickAddSheet.swift in Sources */,
 				158B96D1DB93F318ECB7F6AA /* SavingsView.swift in Sources */,
 				C185E969D8CC162D5E9B1101 /* SettingsView.swift in Sources */,
+				FA1234567890ABCDEF123456 /* SubscriptionsView.swift in Sources */,
 				5BFA6A1F63124A8BD10ABBC7 /* SillageApp.swift in Sources */,
 				8E6B70E8AD210A6604060189 /* Transaction.swift in Sources */,
 				D7936C8385654111507716B7 /* UserConfig.swift in Sources */,

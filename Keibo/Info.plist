@@ -8,14 +8,14 @@
 	<string>Sillage</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIconName</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundleIconName</key>
-	<string>AppIcon</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -23,11 +23,11 @@
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Keibo utilise Face ID pour protéger l'accès à tes données financières.</string>
-	<key>UIFileSharingEnabled</key>
-	<false/>
+	<string>Sillage utilise Face ID pour protéger l'accès à tes données financières.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
+	<key>UIFileSharingEnabled</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
