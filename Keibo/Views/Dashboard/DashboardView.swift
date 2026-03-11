@@ -440,6 +440,7 @@ struct IncomeEditSheet: View {
 
     @State private var incomeText: String = ""
     @State private var startingBalanceText: String = ""
+    @State private var startingBalanceIsNegative: Bool = false
 
     private var config: UserConfig? { configs.first }
 
@@ -461,13 +462,26 @@ struct IncomeEditSheet: View {
                 }
 
                 Section {
-                    TextField("Ex : 1000", text: $startingBalanceText)
-                        .keyboardType(.decimalPad)
-                        .font(.system(size: 28, weight: .bold, design: .rounded))
+                    HStack(spacing: 12) {
+                        Button {
+                            startingBalanceIsNegative.toggle()
+                            Haptics.selection()
+                        } label: {
+                            Text(startingBalanceIsNegative ? "−" : "+")
+                                .font(.system(size: 28, weight: .bold, design: .rounded))
+                                .frame(width: 36)
+                                .foregroundStyle(startingBalanceIsNegative ? Color.sillageDanger : Color.sillageSuccess)
+                        }
+                        .buttonStyle(.plain)
+
+                        TextField("Ex : 1000", text: $startingBalanceText)
+                            .keyboardType(.decimalPad)
+                            .font(.system(size: 28, weight: .bold, design: .rounded))
+                    }
                 } header: {
                     Text("Solde de départ du cycle")
                 } footer: {
-                    Text("L'argent que tu avais déjà disponible avant ce cycle (report, économies sur le compte courant…). Sera ajouté au revenu pour ce cycle.")
+                    Text("L'argent disponible avant ce cycle. Utilise − si tu commences avec un découvert. Sera ajouté à ton revenu pour ce cycle.")
                 }
             }
             .navigationTitle("Revenu")
@@ -479,7 +493,7 @@ struct IncomeEditSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Enregistrer") {
                         let parsedIncome = parseDecimal(incomeText)
-                        let parsedBalance = parseDecimal(startingBalanceText)
+                        let parsedBalance = parseDecimal(startingBalanceText) * (startingBalanceIsNegative ? -1 : 1)
                         config?.monthlyIncome = parsedIncome
                         currentCycle?.totalIncome = parsedIncome
                         currentCycle?.rolloverAmount = parsedBalance
@@ -492,8 +506,9 @@ struct IncomeEditSheet: View {
                 if let income = config?.monthlyIncome, income > 0 {
                     incomeText = formatForEditing(income)
                 }
-                if let rollover = currentCycle?.rolloverAmount, rollover > 0 {
-                    startingBalanceText = formatForEditing(rollover)
+                if let rollover = currentCycle?.rolloverAmount, rollover != 0 {
+                    startingBalanceIsNegative = rollover < 0
+                    startingBalanceText = formatForEditing(abs(rollover))
                 }
             }
         }

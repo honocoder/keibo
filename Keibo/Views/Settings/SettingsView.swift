@@ -127,7 +127,7 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                     HStack {
-                        Text("Sillage")
+                        Text("Keibo")
                         Spacer()
                         Text("Budget Base-Zéro")
                             .foregroundStyle(.secondary)

@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftData
 
-/// Bottom sheet for adding a transaction in < 3 seconds.
+/// Bottom sheet for adding or editing a transaction in < 3 seconds.
 struct QuickAddSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss)      private var dismiss
@@ -9,6 +9,9 @@ struct QuickAddSheet: View {
 
     @Query(sort: \Category.sortOrder) private var categories: [Category]
     @Query(sort: \BudgetCycle.startDate, order: .reverse) private var cycles: [BudgetCycle]
+
+    /// If set, the sheet edits an existing transaction instead of creating a new one.
+    var editingTransaction: Transaction? = nil
 
     enum TransactionMode: String, CaseIterable {
         case expense = "Dépense"
@@ -23,14 +26,17 @@ struct QuickAddSheet: View {
     @State private var selectedDate: Date   = .now
     @State private var showDatePicker       = false
 
+    private var isEditing: Bool { editingTransaction != nil }
     private var amount: Double { parseDecimal(amountText) }
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: DS.gridSpacing * 1.5) {
-                    // MARK: Mode toggle
-                    modePicker
+                    // MARK: Mode toggle (hidden when editing)
+                    if !isEditing {
+                        modePicker
+                    }
 
                     // MARK: Amount input
                     amountField
@@ -53,12 +59,19 @@ struct QuickAddSheet: View {
             .safeAreaInset(edge: .bottom) {
                 validateButton
             }
-            .navigationTitle(mode == .expense ? "Nouvelle dépense" : "Nouveau revenu")
+            .navigationTitle(isEditing ? "Modifier la dépense" : (mode == .expense ? "Nouvelle dépense" : "Nouveau revenu"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Annuler") { dismiss() }
                 }
+            }
+            .onAppear {
+                guard let tx = editingTransaction else { return }
+                amountText = formatForEditing(tx.amount)
+                note = tx.note
+                selectedCategory = tx.category
+                selectedDate = tx.date
             }
         }
         .presentationDetents([.large])
@@ -164,11 +177,13 @@ struct QuickAddSheet: View {
             save()
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: mode == .income ? "plus.circle.fill" : "checkmark.circle.fill")
+                Image(systemName: isEditing ? "checkmark.circle.fill" : (mode == .income ? "plus.circle.fill" : "checkmark.circle.fill"))
                     .font(.title3)
-                Text(mode == .income
-                     ? "Ajouter \(amount > 0 ? "+" + amount.formatted(currencyCode: "EUR") : "")"
-                     : "Valider \(amount > 0 ? amount.formatted(currencyCode: "EUR") : "")")
+                Text(isEditing
+                     ? "Enregistrer \(amount > 0 ? amount.formatted(currencyCode: "EUR") : "")"
+                     : (mode == .income
+                        ? "Ajouter \(amount > 0 ? "+" + amount.formatted(currencyCode: "EUR") : "")"
+                        : "Valider \(amount > 0 ? amount.formatted(currencyCode: "EUR") : "")"))
                     .font(.headline)
             }
             .frame(maxWidth: .infinity)
@@ -195,7 +210,13 @@ struct QuickAddSheet: View {
     private func save() {
         guard amount > 0 else { return }
 
-        if mode == .income {
+        if let tx = editingTransaction {
+            // Edit existing transaction
+            tx.amount = amount
+            tx.note = note
+            tx.category = selectedCategory
+            tx.date = selectedDate
+        } else if mode == .income {
             // Add extra income to the current cycle
             if let cycle = cycles.first(where: {
                 $0.startDate == budget.cycleStart
@@ -210,6 +231,15 @@ struct QuickAddSheet: View {
         Haptics.impact(.medium)
         Haptics.notification(.success)
         dismiss()
+    }
+
+    private func formatForEditing(_ value: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.locale = .current
+        formatter.maximumFractionDigits = 2
+        formatter.minimumFractionDigits = 0
+        return formatter.string(from: NSNumber(value: value)) ?? "\(value)"
     }
 
     /// Parses a decimal string accounting for locale (comma or dot as separator).

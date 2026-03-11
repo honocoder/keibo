@@ -8,8 +8,9 @@ struct HistoryView: View {
     @Query(sort: \Transaction.date, order: .reverse) private var allTransactions: [Transaction]
     @Query private var configs: [UserConfig]
 
-    @State private var searchText   = ""
-    @State private var filterType   = FilterType.all
+    @State private var searchText          = ""
+    @State private var filterType          = FilterType.all
+    @State private var editingTransaction: Transaction? = nil
 
     private var currencyCode: String { configs.first?.currencyCode ?? "EUR" }
 
@@ -90,6 +91,15 @@ struct HistoryView: View {
                             Section(header: Text(dayGroup.key.formatted(.dateTime.weekday(.wide).day().month())).textCase(nil)) {
                                 ForEach(dayGroup.value) { tx in
                                     TransactionRow(tx: tx, currencyCode: currencyCode)
+                                        .swipeActions(edge: .leading) {
+                                            Button {
+                                                editingTransaction = tx
+                                                Haptics.selection()
+                                            } label: {
+                                                Label("Modifier", systemImage: "pencil")
+                                            }
+                                            .tint(.sillageAccent)
+                                        }
                                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                             Button(role: .destructive) {
                                                 context.delete(tx)
@@ -108,6 +118,9 @@ struct HistoryView: View {
             .navigationTitle("Historique")
             .navigationBarTitleDisplayMode(.large)
             .searchable(text: $searchText, prompt: "Rechercher…")
+            .sheet(item: $editingTransaction) { tx in
+                QuickAddSheet(editingTransaction: tx)
+            }
         }
     }
 

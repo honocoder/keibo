@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 import Observation
 
-/// Core business logic for Sillage's rolling budget cycle.
+/// Core business logic for Keibo's rolling budget cycle.
 ///
 /// This class is intentionally kept free of SwiftData queries so it can be
 /// unit-tested without a live ModelContext. Views fetch raw data via @Query and

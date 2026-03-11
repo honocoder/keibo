@@ -16,7 +16,7 @@ final class AuthManager: ObservableObject {
     // MARK: - Public
 
     /// Attempt biometric or passcode authentication.
-    func authenticate(reason: String = "Déverrouille Sillage") async {
+    func authenticate(reason: String = "Déverrouille Keibo") async {
         authError = nil
         let context = LAContext()
         var error: NSError?

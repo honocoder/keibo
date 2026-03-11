@@ -7,6 +7,7 @@ struct ContentView: View {
     @EnvironmentObject private var auth:   AuthManager
 
     @Query private var configs: [UserConfig]
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
 
     private var config: UserConfig? { configs.first }
 
@@ -16,6 +17,12 @@ struct ContentView: View {
                 LockScreen()
             } else {
                 MainTabView()
+                    .fullScreenCover(isPresented: Binding(
+                        get: { !hasCompletedOnboarding },
+                        set: { if !$0 { hasCompletedOnboarding = true } }
+                    )) {
+                        OnboardingView { hasCompletedOnboarding = true }
+                    }
             }
         }
         .onAppear {
@@ -120,7 +127,7 @@ struct LockScreen: View {
                             )
                     }
 
-                    Text("Sillage")
+                    Text("Keibo")
                         .font(.system(size: 36, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                     Text("Budget Base-Zéro")
@@ -166,7 +173,7 @@ struct LockScreen: View {
                     .buttonStyle(.plain)
 
                     Button("Utiliser le code") {
-                        Task { await auth.authenticate(reason: "Déverrouille Sillage avec ton code") }
+                        Task { await auth.authenticate(reason: "Déverrouille Keibo avec ton code") }
                     }
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.6))

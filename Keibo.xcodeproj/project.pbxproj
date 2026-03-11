@@ -28,6 +28,7 @@
 		E1F4A8B275A44D5F9D32C1A8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7D2E4F91A6C43B8B3A7120D /* Assets.xcassets */; };
 		E5F36F9DF5FBD5659F3A8B7C /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D323408A72ECE442748E1B /* DashboardView.swift */; };
 		FA1234567890ABCDEF123456 /* SubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB1234567890ABCDEF123456 /* SubscriptionsView.swift */; };
+		AC1234567890ABCDEF000001 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1234567890ABCDEF000002 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		BFC185E6F3870BC76FFB310D /* FixedExpenseRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedExpenseRow.swift; sourceTree = "<group>"; };
 		C227B2212F5E14CD00618E20 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		FB1234567890ABCDEF123456 /* SubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsView.swift; sourceTree = "<group>"; };
+		AC1234567890ABCDEF000002 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		C24DD4342F5B839800284E66 /* todo.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = todo.md; sourceTree = "<group>"; };
 		CB550691AC47FA734B46E4EF /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		CD1898682B910749A56A6283 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -73,12 +75,21 @@
 				334BBE6C16BDD8B12C2D2093 /* DesignSystem.swift */,
 				82EB8894F983EC3295C87D6B /* Dashboard */,
 				D74A4B9B5836B1906327B9EE /* History */,
+				AC1234567890ABCDEF000003 /* Onboarding */,
 				D9A14BC5E6637C2E518970D2 /* Savings */,
 				C2E7B745568FF31E63ABBDA6 /* Settings */,
 				7F87C316135C1EFFDF555D72 /* Shared */,
 				FC1234567890ABCDEF123456 /* Subscriptions */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AC1234567890ABCDEF000003 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				AC1234567890ABCDEF000002 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		7F87C316135C1EFFDF555D72 /* Shared */ = {
@@ -258,6 +269,7 @@
 				158B96D1DB93F318ECB7F6AA /* SavingsView.swift in Sources */,
 				C185E969D8CC162D5E9B1101 /* SettingsView.swift in Sources */,
 				FA1234567890ABCDEF123456 /* SubscriptionsView.swift in Sources */,
+				AC1234567890ABCDEF000001 /* OnboardingView.swift in Sources */,
 				5BFA6A1F63124A8BD10ABBC7 /* SillageApp.swift in Sources */,
 				8E6B70E8AD210A6604060189 /* Transaction.swift in Sources */,
 				D7936C8385654111507716B7 /* UserConfig.swift in Sources */,
